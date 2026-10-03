@@ -1,0 +1,34 @@
+Feeds System 1): 
+I'm already aware of basic pressure systems, so my immediate first thought is the ability for a regulated pressure system to adapt to any pressure changes necessary during feeding - will probably avoid floating-propellant issues during flight, considering the former blow-down architecture will - I believe - have a constant gas amount in the respective bipropellant tanks, and applied pressure on the propellants will go down as volume of inert gas increases, which'll probably cause ullage issues as the liquid fuel has a lesser downwards force towards the end of a burn... (Obviously causing feeding issues)
+My second thought, on the other hand, is a drawback of a regulated pressure system - another, separate holding tank (fed as needed to the bipropellant tanks instead of having the gas in said tanks) is another liability during flight, as storing (presumably) very high-pressure gas for *both* tanks at the start of the launch is very risky, and will probably put extra material stress - hence more strong and expensive materials are needed. (I'm not sure how "correct" this answer is, just my way of thinking..)
+
+Upon more research (https://www.honkawarocketry.com/), I also realise a lesser pressure being applied to propellants in blow-down pressurization as the burn continues will obviously mean less thrust for the engine as propellants are burned.. This is an obvious downside, and also means it's possible a non-negligible amount of propellants will fail to ignite as they aren't fed to the combustion tank/motor.
+
+ - and of course greater volume of propellants can go into a fuel-tank with regulated pressure architecture, since blow-down pressurizing - from my understanding - requires a set amount of each propellant tank to be the gas. 
+
+If I'm using this terminology right - COPV materials required for the pressure tank need to be pressurized very slowly and also possibly have liquid cooling - seems like a launch-day liability, and also doesn't allow for rapid depressurization for emergencies. However, blow-down pressurization does.
+Of course regulated pressure adds to the moving parts needed for a COPV tank, which is always more of a headache with multiple points of failure..
+
+Regeneratively cooling engines pass the cool propellant around the exterior of the combustion chamber in order to have a liquid cooling system, before being introduced to the combustion chamber. This obviously prevents engine overheating and increases reliability, decreases chance of failure for an engine motor, could also avoid the use of external cooling systems. On the other hand, advanced feeding/plumbing is most likely required for this system, which obviously leads to needing advanced testing/models.
+
+Testing for blow-down pressure systems would presumably involve mapping internal pressure in propellant tanks over time during a simulated burn/static test. Rapid depressurization will also have to be tested in emergency scenarios. Modelling and simulations for regulated pressure feeding will presumably be much more complicated and more prone to abstraction/errors in simulations - and more safety checks will have to be done prior to launch.
+
+Avionics 2):
+I am assuming telemetry should use a simple hub-and-spoke model where data packets transmitted through RF follow a data protocol which allow for:
+- Easy encoding from raw sensor data/GPS data to RF packets via Physical layer
+- Robustness against noise/interference
+- Very few bits per-package for quick en/decoding, transmission, updating and parsing-
+
+Learning source onwards: https://lumi-star.com/feeds/blog/telemetry-modulation-unit
+
+-(With this system, data-loss from compression could be acceptable to a certain degree)
+However at the same time, proper formatting needs to be applied to the protocol in order to not have confusion as to what bits in the data stream correspond to what telemetry values, and whether it's an int, bool, floating point etc...
+
+For this, telemetry can be transmitted via payloads, with a set byte size - once completely sent, telemetry can begin re-sending to the ground station/hub for updating. Each byte/string of bytes can correspond to each reading from telemetry sends, and perhaps have an identifier bit(s) at the start to ensure no confusion. Possibly a checksum can be introduced for data integrity.
+
+(For the physical layer - A lot of (most?) radio modules do a lot of these checks independently! I assume custom radio module PCBs are being used for these projects, so building these checks from the ground-up is good practice. FM or AM can be used for sending packets - AM has better range but can be subjected to more interference.)
+
+In my research, hobbyist rocketry frequently send telemetry data at around 433MHz: https://www.rocketryforum.com/threads/best-radio-module-for-telemetry.175074/
+However U.S standard appears to be around 900MHz for amateur rocketry - it overall seems to allow for a good downlink speed for amateur rocketry (~>1kbps), a decent range, cheap antennae and little regulation/licenses needed for transmission at those frequencies. Possibly using a dual-frequency system can allow for a major increase in bandwidth, but may require greater infrastructure/antennae costs. 
+
+Testing may involve sensor calibrations, simulated signal loads etc.. With later controlled test runs in environment, where cutoffs, interference etc... can be tested and suppressed as much as possible. Test data packets can be sent from given ranges from the module to ground control, to ensure data validity and constant transmission rates.
