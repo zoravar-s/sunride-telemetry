@@ -80,7 +80,7 @@ int main() {
     cout << "Enter binary string:  ";
     cin >> binaryString;
 
-    // encode the input values
+    // decode the input values
 
     auto [time_conv, detector_conv, barometer_conv, temperature_conv, acceleration_conv] = decode(binaryString);
     
